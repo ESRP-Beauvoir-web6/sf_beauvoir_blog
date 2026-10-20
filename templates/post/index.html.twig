@@ -8,23 +8,19 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Title</th>
-                <th>Content</th>
-                <th>CreatedAt</th>
+                <th>Titre de l'article</th>
                 <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for post in posts %}
             <tr>
-                <td>{{ post.id }}</td>
                 <td>{{ post.title }}</td>
-                <td>{{ post.content }}</td>
-                <td>{{ post.createdAt ? post.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_post_show', {'id': post.id}) }}">show</a>
-                    <a href="{{ path('app_post_edit', {'id': post.id}) }}">edit</a>
+                    <a href="{{ path('app_post_show', {'id': post.id}) }}">Voir l'article</a>
+                    {% if is_granted("ROLE_ADMIN") %}
+                    <a href="{{ path('app_post_edit', {'id': post.id}) }}">Modifier un article</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
