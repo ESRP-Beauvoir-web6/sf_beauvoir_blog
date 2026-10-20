@@ -28,8 +28,12 @@ final class PostController extends AbstractController
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
+        $user = $this->getUser();
+        $date = new \DateTimeImmutable("now");
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $post->setCreatedAt($date);
+            $post->setAuthor($user);
             $entityManager->persist($post);
             $entityManager->flush();
 

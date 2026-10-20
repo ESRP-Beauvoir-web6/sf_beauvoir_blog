@@ -3,8 +3,6 @@
 namespace App\Form;
 
 use App\Entity\Category;
-use App\Entity\Post;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -15,11 +13,6 @@ class CategoryType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('posts', EntityType::class, [
-                'class' => Post::class,
-                'choice_label' => 'id',
-                'multiple' => true,
-            ])
         ;
     }
 

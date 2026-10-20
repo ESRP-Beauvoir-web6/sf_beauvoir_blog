@@ -1,5 +1,18 @@
 <header>
+    <div>
+        <h1>Beauvoir Blog</h1>
+    </div>
     <nav>
-        Menu
+        <ul>
+            {% if not app.user %}
+            <li><a href="{{ path("app_login") }}">Connexion</a></li>
+            <li><a href="{{ path("app_register") }}">Inscription</a></li>
+            
+            {% else %}
+            <li><a href="{{ path("app_logout") }}">Deconnexion</a></li>
+            <li>Bonjour {{ app.user.username }}</li>
+            {% endif %}
+            
+        </ul>
     </nav>
 </header>
