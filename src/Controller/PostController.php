@@ -24,7 +24,7 @@ final class PostController extends AbstractController
     }
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
-    #[IsGranted("ROLE_AUTEUR")]
+    #[IsGranted("IS_AUTHENTICATED_FULLY")]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $post = new Post();

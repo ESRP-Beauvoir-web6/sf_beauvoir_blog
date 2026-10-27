@@ -11,7 +11,10 @@
             {% else %}
             <li><a href="{{ path("app_logout") }}">Deconnexion</a></li>
             <li>Bonjour {{ app.user.username }}</li>
-            {% endif %}     
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN') %} 
+            <li><a href="{{ path('app_user_index') }}">Menu admin</a></li>
+            {% endif %}    
         </ul>
     </nav>
 </header>

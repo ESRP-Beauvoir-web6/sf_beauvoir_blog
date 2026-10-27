@@ -30,8 +30,10 @@ final class CommentController extends AbstractController
         $comment = new Comment();
         $form = $this->createForm(CommentType::class, $comment);
         $form->handleRequest($request);
+        $user = $this->getUser();
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setAuthor($user);
             $entityManager->persist($comment);
             $entityManager->flush();
 

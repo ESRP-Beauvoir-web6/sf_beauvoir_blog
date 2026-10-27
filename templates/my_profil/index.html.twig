@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MyProfilController!{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Mon profil</h1>
+    <p>NOM D'UTILISATEUR : {{ app.user.username }}</p>
+    <p>EMAIL : {{ app.user.email }}</p>
+
+    <a href="{{ path('app_profil_edit', {id : app.user.id}) }}">Modifier mes informations</a>
+    <a href="{{ path('app_profil_password_edit', {id : app.user.id}) }}">Modifier mon mot de passe</a>
+
+    {% for message in app.flashes() %}
+        <div>
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
