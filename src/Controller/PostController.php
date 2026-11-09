@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Post;
 use App\Form\PostType;
 use App\Repository\PostRepository;
+use App\Service\FileUploader;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,7 +27,7 @@ final class PostController extends AbstractController
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
     #[IsGranted("IS_AUTHENTICATED_FULLY")]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
         $post = new Post();
         $form = $this->createForm(PostType::class, $post);
@@ -36,6 +38,13 @@ final class PostController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $post->setCreatedAt($date);
             $post->setAuthor($user);
+            $image = $form->get('image')->getData();
+
+            if ($image) {
+                $filename = $fileUploader->upload($image);
+                $post->setImage($filename);
+            }
+
             $entityManager->persist($post);
             $entityManager->flush();
 
@@ -58,12 +67,24 @@ final class PostController extends AbstractController
 
     #[Route('/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, Post $post, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Post $post, EntityManagerInterface $entityManager, FileUploader $fileUploader, Filesystem $filesystem): Response
     {
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $oldImage = $post->getImage();
+            $image = $form->get('image')->getData();
+            if ($image) {
+                $filename = $fileUploader->upload($image);
+                if ($oldImage) {
+                    $oldFilePath = $this->getParameter('images_directory').'/'.$oldImage;
+                    if ($filesystem->exists($oldFilePath)) {
+                        $filesystem->remove($oldFilePath);
+                    }
+                }
+                $post->setImage($filename);
+            }
             $entityManager->flush();
 
             return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
@@ -77,9 +98,17 @@ final class PostController extends AbstractController
 
     #[Route('/{id}', name: 'app_post_delete', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function delete(Request $request, Post $post, EntityManagerInterface $entityManager): Response
+    public function delete(Request $request, Post $post, EntityManagerInterface $entityManager, FileUploader $fileUploader, Filesystem $filesystem): Response
     {
         if ($this->isCsrfTokenValid('delete'.$post->getId(), $request->getPayload()->getString('_token'))) {
+            $oldImage = $post->getImage();
+            if ($oldImage) {
+                $oldFilePath = $this->getParameter('images_directory').'/'.$oldImage;
+                if ($filesystem->exists($oldFilePath)) {
+                    $filesystem->remove($oldFilePath);
+                }
+            }
+
             $entityManager->remove($post);
             $entityManager->flush();
         }
