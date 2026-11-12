@@ -42,7 +42,6 @@ security:
         ROLE_USER : ROLE_USER
         ROLE_AUTEUR : ROLE_USER
         ROLE_ADMIN : ROLE_AUTEUR
-
 when@test:
     security:
         password_hashers:

@@ -1,0 +1,171 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Erreur {{ status_code }}{% endblock %}
+
+{% block body %}
+
+{# Liste des erreurs HTTP #}
+{% set errors = {
+    400: ['Requête incorrecte', 'Le serveur ne peut pas traiter votre requête en raison d’une syntaxe incorrecte.'],
+    401: ['Authentification requise', 'Vous devez vous authentifier pour accéder à cette ressource.'],
+    402: ['Paiement requis', 'Un paiement est nécessaire pour accéder à cette ressource.'],
+    403: ['Accès interdit', 'Vous ne disposez pas des autorisations nécessaires pour accéder à cette page.'],
+    404: ['Page introuvable', 'La page demandée est introuvable ou a été déplacée.'],
+    405: ['Méthode non autorisée', 'La méthode HTTP utilisée n’est pas autorisée pour cette ressource.'],
+    406: ['Format non acceptable', 'Le serveur ne peut pas fournir une réponse dans le format demandé.'],
+    407: ['Authentification du proxy requise', 'Une authentification auprès du serveur proxy est nécessaire.'],
+    408: ['Délai d’attente dépassé', 'Le serveur a attendu trop longtemps votre requête.'],
+    409: ['Conflit', 'Votre requête entre en conflit avec l’état actuel de la ressource.'],
+    410: ['Ressource supprimée', 'Cette ressource n’est plus disponible et a été définitivement supprimée.'],
+    411: ['Longueur requise', 'La longueur du contenu de la requête doit être précisée.'],
+    412: ['Précondition échouée', 'Une condition nécessaire à l’exécution de votre requête n’est pas remplie.'],
+    413: ['Contenu trop volumineux', 'Les données envoyées dépassent la taille autorisée par le serveur.'],
+    414: ['Adresse trop longue', 'L’adresse URL demandée dépasse la longueur autorisée.'],
+    415: ['Format non pris en charge', 'Le format des données envoyées n’est pas accepté par le serveur.'],
+    416: ['Plage non satisfaisable', 'La portion de ressource demandée ne peut pas être fournie.'],
+    417: ['Attente non satisfaite', 'Le serveur ne peut pas satisfaire les attentes indiquées dans la requête.'],
+    418: ['Je suis une théière', 'Le serveur refuse de préparer du café : il est une théière.'],
+    421: ['Requête mal dirigée', 'La requête a été envoyée à un serveur qui ne peut pas y répondre.'],
+    422: ['Contenu impossible à traiter', 'Les données envoyées sont compréhensibles mais ne peuvent pas être traitées.'],
+    423: ['Ressource verrouillée', 'La ressource demandée est actuellement verrouillée.'],
+    424: ['Dépendance échouée', 'La requête a échoué en raison de l’échec d’une opération précédente.'],
+    425: ['Requête prématurée', 'Le serveur refuse de traiter une requête susceptible d’être rejouée.'],
+    426: ['Mise à niveau requise', 'Vous devez utiliser un protocole différent pour accéder à cette ressource.'],
+    428: ['Précondition requise', 'Le serveur exige que votre requête comporte certaines conditions.'],
+    429: ['Trop de requêtes', 'Vous avez effectué trop de requêtes. Veuillez patienter avant de réessayer.'],
+    431: ['En-têtes trop volumineux', 'Les en-têtes de votre requête dépassent la taille autorisée.'],
+    451: ['Indisponible pour raisons légales', 'Cette ressource est inaccessible pour des raisons juridiques.'],
+
+    500: ['Erreur interne du serveur', 'Une erreur inattendue est survenue sur le serveur.'],
+    501: ['Fonctionnalité non implémentée', 'Le serveur ne prend pas en charge la fonctionnalité demandée.'],
+    502: ['Mauvaise passerelle', 'Le serveur a reçu une réponse invalide d’un autre serveur.'],
+    503: ['Service indisponible', 'Le service est temporairement indisponible. Veuillez réessayer plus tard.'],
+    504: ['Délai de passerelle dépassé', 'Le serveur intermédiaire n’a pas reçu de réponse dans le délai imparti.'],
+    505: ['Version HTTP non prise en charge', 'La version du protocole HTTP utilisée n’est pas prise en charge.'],
+    506: ['Négociation impossible', 'Une erreur de configuration empêche le serveur de fournir la ressource.'],
+    507: ['Stockage insuffisant', 'Le serveur ne dispose pas de suffisamment d’espace pour traiter votre requête.'],
+    508: ['Boucle détectée', 'Le serveur a détecté une boucle infinie lors du traitement de la requête.'],
+    510: ['Extension requise', 'Des extensions supplémentaires sont nécessaires pour traiter la requête.'],
+    511: ['Authentification réseau requise', 'Vous devez vous authentifier auprès du réseau pour accéder à cette ressource.']
+} %}
+
+{# Gestion des codes inconnus #}
+{% set error = errors[status_code] ?? [
+    'Une erreur est survenue',
+    'Une erreur inattendue empêche le traitement de votre demande.'
+] %}
+
+<main class="min-h-screen bg-neutral-950 flex items-center justify-center px-4 py-12">
+
+    <div class="w-full max-w-2xl text-center">
+
+        {# Numéro de l'erreur #}
+        <div class="relative mb-10">
+
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-56 h-56 bg-amber-600/10 rounded-full blur-3xl"></div>
+            </div>
+
+            <h1 class="relative text-8xl md:text-9xl font-black tracking-tight text-amber-600">
+                {{ status_code }}
+            </h1>
+
+            <p class="mt-3 text-xs font-semibold uppercase tracking-[0.3em] text-neutral-500">
+                Erreur HTTP
+            </p>
+
+        </div>
+
+        {# Carte principale #}
+        <div class="rounded-2xl border border-neutral-800 bg-neutral-900 p-8 md:p-12 shadow-2xl">
+
+            {# Icône #}
+            <div class="flex justify-center mb-8">
+
+                <div class="w-20 h-20 flex items-center justify-center rounded-full bg-amber-600/10 border border-amber-600/30">
+
+                    <svg class="w-10 h-10 text-amber-500"
+                         xmlns="http://www.w3.org/2000/svg"
+                         fill="none"
+                         viewBox="0 0 24 24"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         aria-hidden="true">
+
+                        <path stroke-linecap="round"
+                              stroke-linejoin="round"
+                              d="M12 9v3.75m0 3.75h.007v.008H12v-.008ZM10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+            {# Titre de l'erreur #}
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-5">
+                {{ error[0] }}
+            </h2>
+
+            {# Description #}
+            <p class="text-neutral-400 text-base md:text-lg leading-relaxed mb-10">
+                {{ error[1] }}
+            </p>
+
+            <div class="border-t border-neutral-800 pt-8">
+
+                {# Boutons #}
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+
+                    <a href="{{ path('app_home') }}"
+                       class="inline-flex items-center justify-center gap-2 rounded-lg bg-amber-600 px-7 py-3 font-semibold text-neutral-950 transition-all duration-200 hover:bg-amber-500 hover:shadow-lg hover:shadow-amber-600/20">
+
+                        <svg class="w-5 h-5"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24"
+                             aria-hidden="true">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7"/>
+                        </svg>
+
+                        Retour à l'accueil
+                    </a>
+
+                    <button type="button"
+                            onclick="window.history.back()"
+                            class="inline-flex items-center justify-center gap-2 rounded-lg border border-neutral-700 bg-neutral-800 px-7 py-3 font-medium text-neutral-300 transition-all duration-200 hover:bg-neutral-700 hover:text-white">
+
+                        <svg class="w-5 h-5"
+                             fill="none"
+                             stroke="currentColor"
+                             viewBox="0 0 24 24"
+                             aria-hidden="true">
+                            <path stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M10 19 3 12m0 0 7-7m-7 7h18"/>
+                        </svg>
+
+                        Page précédente
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        {# Pied de page #}
+        <p class="mt-8 text-sm text-neutral-600">
+            Code HTTP {{ status_code }} — {{ error[0] }}
+        </p>
+
+    </div>
+
+</main>
+
+{% endblock %}

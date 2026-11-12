@@ -26,7 +26,7 @@ final class PostController extends AbstractController
     }
 
     #[Route('/new', name: 'app_post_new', methods: ['GET', 'POST'])]
-    #[IsGranted("IS_AUTHENTICATED_FULLY")]
+    #[IsGranted("ROLE_AUTEUR")]
     public function new(Request $request, EntityManagerInterface $entityManager, FileUploader $fileUploader): Response
     {
         $post = new Post();
@@ -48,6 +48,8 @@ final class PostController extends AbstractController
             $entityManager->persist($post);
             $entityManager->flush();
 
+            $this->addFlash("success","Votre article à été créé avec succès");
+
             return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -66,9 +68,9 @@ final class PostController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_post_edit', methods: ['GET', 'POST'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function edit(Request $request, Post $post, EntityManagerInterface $entityManager, FileUploader $fileUploader, Filesystem $filesystem): Response
     {
+        $this->denyAccessUnlessGranted('POST_EDIT', $post);
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
@@ -87,6 +89,8 @@ final class PostController extends AbstractController
             }
             $entityManager->flush();
 
+            $this->addFlash("success","Votre article à bien été mis à jour");
+
             return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -97,9 +101,9 @@ final class PostController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_post_delete', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN')]
     public function delete(Request $request, Post $post, EntityManagerInterface $entityManager, FileUploader $fileUploader, Filesystem $filesystem): Response
     {
+        $this->denyAccessUnlessGranted('POST_EDIT', $post);
         if ($this->isCsrfTokenValid('delete'.$post->getId(), $request->getPayload()->getString('_token'))) {
             $oldImage = $post->getImage();
             if ($oldImage) {
@@ -111,6 +115,8 @@ final class PostController extends AbstractController
 
             $entityManager->remove($post);
             $entityManager->flush();
+            
+            $this->addFlash("success","Votre article à bien été supprimé");
         }
 
         return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
