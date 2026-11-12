@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello SearchController!{% endblock %}
+
+{% block body %}
+<div>
+    <h1>Rechercher un article</h1>
+
+    <form action="{{ path('app_search') }}">
+        <input type="text" name="search" id="search" value="{{ search }}" placeholder="Rechercher un article">
+        <button type="submit">Chercher !!</button>
+    </form>
+    <div>
+    {% if search is not empty %}
+        <h2>Résultats pour : "{{ search }}"</h2>
+        <p>{{ posts|length }} article(s) trouvés</p>
+        {% for post in posts %}
+        <div>
+            <h3>{{ post.title }}</h3>
+            <p>{{ post.content }}</p>
+            <a href="{{ path('app_post_show', {'id' : post.id}) }}">Voir l'article</a>
+        </div>
+        {% else %}
+        <div>
+            <p>Aucun article ne correspond à votre recherche</p>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div>
+        <p>Saisissez un mot clé pour rechercher un article</p>
+    </div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}

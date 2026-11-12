@@ -22,10 +22,18 @@
     </head>
     <body>
         {% include ('partials/_header.html.twig') %}
-        {% for message in app.flashes('success') %}
-            <div class="p-4 mb-4 text-sm text-fg-success-strong rounded-base bg-success-soft" role="alert">
-                <span class="font-medium">Success alert!</span> {{ message }}
-            </div>
+        {% set flashClasses = {
+            'success' : 'success_message',
+            'danger' : 'bg-danger-soft',
+            'warning' : 'bg-warning-soft',
+            'info' : 'bg-info-soft'
+        } %}
+        {% for label, messages in app.flashes() %}
+            {% for message in messages %}
+                <div class="p-4 mb-4 text-sm text-fg-success-strong rounded-base {{ flashClasses[label] }}" role="alert">
+                    <span class="font-medium"></span> {{ message }}
+                </div>
+            {% endfor %}
         {% endfor %}
         {% block body %}{% endblock %}
     </body>

@@ -40,4 +40,15 @@ class PostRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function searchByTitle(string $search): array 
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.title LIKE :search')
+            ->setParameter('search', '%' .$search. '%')
+            ->orderBy('p.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+
+    }
 }
+

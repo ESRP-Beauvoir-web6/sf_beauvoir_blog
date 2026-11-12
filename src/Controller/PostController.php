@@ -93,6 +93,9 @@ final class PostController extends AbstractController
 
             return $this->redirectToRoute('app_post_index', [], Response::HTTP_SEE_OTHER);
         }
+        elseif ( $form->isSubmitted() && !$form->isValid() ) {
+            $this->addFlash("danger","Une erreur est survenue");
+        }
 
         return $this->render('post/edit.html.twig', [
             'post' => $post,
@@ -115,7 +118,7 @@ final class PostController extends AbstractController
 
             $entityManager->remove($post);
             $entityManager->flush();
-            
+
             $this->addFlash("success","Votre article à bien été supprimé");
         }
 
